@@ -1,2 +1,8 @@
 node_modules/
+
 src/auth.json
+
+
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
