@@ -1,0 +1,10 @@
+{
+  "name": "co-bot",
+  "version": "0.0.1",
+  "description": "The ultimate co-bot",
+  "main": "bot.js",
+  "author": "Luke Prananta",
+  "dependencies": {
+    "discord.js": "^11.2.1"
+  }
+}
