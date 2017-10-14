@@ -6,19 +6,22 @@ module.exports.run = function(client, message, args) {
     const request = async () => {
         try {
             let info = await weather(city);
-            console.log(info);
-            let embed = new Discord.RichEmbed();
-            embed
-                .setTitle(`Weather in ${info.location.city}, ${info.location.country}`)
-                .setDescription(`${info.item.title}`)
-                .setFooter(`Weather data pulled from ${info.image.title}`)
-                .addField('Today\'s High', `${info.item.forecast[0].high} °${info.units.temperature}`, true)
-                .addField('Today\'s Low', `${info.item.forecast[0].low} °${info.units.temperature}`, true)
-                .addField('Temperature', `${info.item.condition.temp} °${info.units.temperature}`, true)
-                .addField('Wind Speed', `${info.wind.speed} ${info.units.speed}`, true)
-                .addField('Humidity', `${info.atmosphere.humidity}%`, true)
-                .addField('Condition', info.item.condition.text, true)
-            message.channel.send(embed);
+            if (info) {
+                let embed = new Discord.RichEmbed();
+                embed
+                    .setTitle(`Weather in ${info.location.city}, ${info.location.country}`)
+                    .setDescription(`${info.item.title}`)
+                    .setFooter(`Weather data pulled from ${info.image.title}`)
+                    .addField('Maximum', `${info.item.forecast[0].high} °${info.units.temperature}`, true)
+                    .addField('Minimum', `${info.item.forecast[0].low} °${info.units.temperature}`, true)
+                    .addField('Recent', `${info.item.condition.temp} °${info.units.temperature}`, true)
+                    .addField('Wind Speed', `${info.wind.speed} ${info.units.speed}`, true)
+                    .addField('Humidity', `${info.atmosphere.humidity}%`, true)
+                    .addField('Condition', info.item.condition.text, true)
+                message.channel.send(embed);
+            } else {
+                message.channel.send("No data!");
+            }
         } catch (err) {
             console.error(err);
             message.channel.send("**An error has occurred**");

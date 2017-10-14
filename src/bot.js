@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const auth = require("./auth.json");
 const fs = require("fs");
-//const sql = require("sqlite");
+
 const client = new Discord.Client();
 
 client.commands = new Discord.Collection();
@@ -17,23 +17,20 @@ fs.readdir("./src/commands", (err, files) => {
             client.commands.set(cmd.help.command, cmd);
         };
     });
-
 });
 
-client.on('ready', function (evt) {
+client.on('ready', (evt) => {
     console.log('Connected');
 });
 
-client.on('message', function(message) {
+client.on('message', (message) => {
     if (message.author.bot) return;
     if (message.content.startsWith(auth.prefix)) {
         let msg = message.content.split(/\s+/g);
         let cmd = client.commands.get(msg[0].toLowerCase().slice(1));
         let args = msg.slice(1);
-        if (cmd && validate(cmd.help.required, args)) {
+        if (cmd && validateArguments(cmd.help.required, args)) {
             cmd.run(client, message, args);
-        } else {
-            message.channel.send("**Invalid command!**")
         }
     }
 
@@ -54,8 +51,8 @@ client.on('message', function(message) {
     }
 });
 
-function validate(required, args) {
-    return (required == args.length);
+function validateArguments(required, args) {
+    return (required <= args.length);
 }
 
 

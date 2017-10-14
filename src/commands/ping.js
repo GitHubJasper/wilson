@@ -1,4 +1,4 @@
-module.exports.run = function (client, message, args) {
+module.exports.run = (client, message, args) => {
     message.channel.send('pong!');
     console.log("Pong sent")
 };
