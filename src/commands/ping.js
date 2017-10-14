@@ -5,5 +5,6 @@ module.exports.run = function (client, message, args) {
 
 module.exports.help = {
     name: "Ping",
-    command: "ping"
+    command: "ping",
+    required: 1
 }

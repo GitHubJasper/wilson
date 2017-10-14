@@ -30,8 +30,10 @@ client.on('message', function(message) {
         let msg = message.content.split(/\s+/g);
         let cmd = client.commands.get(msg[0].toLowerCase().slice(1));
         let args = msg.slice(1);
-        if (cmd) {
+        if (cmd && validate(cmd.help.required, args)) {
             cmd.run(client, message, args);
+        } else {
+            message.channel.send("**Invalid command!**")
         }
     }
 
@@ -51,5 +53,10 @@ client.on('message', function(message) {
        message.channel.send(embed);
     }
 });
+
+function validate(required, args) {
+    return (required == args.length);
+}
+
 
 client.login(auth.token);
