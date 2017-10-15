@@ -12,10 +12,7 @@ const api = new steam({
 });
 
 module.exports.run = (client, message, args) => {
-    let user = message.mentions.users.first();
-    if (!user) {
-        user = message.author;
-    }
+    let user = message.author;
     let steamid = db[user.id].steamid;
     if (!steamid) {
         message.channel.send("Please connect your steam profile first!");
@@ -29,28 +26,20 @@ module.exports.run = (client, message, args) => {
                 console.error(err)
                 return;
             }
-            let counter = 0;
-            let count = data.response.game_count;
-            let list = data.response.games;
-            let msg = "";
-            while (msg.length + list[counter].name.length < 500) {
-                msg = msg.concat(`${list[counter].name}\n`);
-                counter++;
-            }
-            let embed = new Discord.RichEmbed().setTitle(`${count} Games`);
-            embed.setDescription(msg);
-            if (counter < count) {
-                embed.setFooter(`Only showing ${counter} out of ${count} games`)
-            }
+            let pick = data.response.games[Math.ceil(Math.random() * (data.response.game_count - 1))];
+            let embed = new Discord.RichEmbed().setTitle(`Random game from your library`);
+            embed.setDescription("RNGsus has decided that you will play...");
+            embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
+            embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
             message.channel.send(embed);
         }
     })
 };
 
 module.exports.help = {
-    name: "Library",
-    command: "library",
+    name: "Randomgame",
+    command: "randomgame",
     required: 0,
     optional: 1,
-    description: "Show the games you own on steam."
+    description: "Pick a random game from your library."
 }

@@ -2,6 +2,10 @@ const Discord = require("discord.js");
 const auth = require("./auth.json");
 const fs = require("fs");
 
+/*
+Todo: random game pick, check if both has game,
+ */
+
 const client = new Discord.Client();
 
 client.commands = new Discord.Collection();

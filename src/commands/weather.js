@@ -11,7 +11,7 @@ module.exports.run = function(client, message, args) {
                 embed
                     .setTitle(`Weather in ${info.location.city}, ${info.location.country}`)
                     .setDescription(`${info.item.title}`)
-                    .setFooter(`Weather data pulled from ${info.image.title}`)
+                    .setFooter(`Weather data obtained from ${info.image.title}`)
                     .addField('Maximum', `${info.item.forecast[0].high} °${info.units.temperature}`, true)
                     .addField('Minimum', `${info.item.forecast[0].low} °${info.units.temperature}`, true)
                     .addField('Recent', `${info.item.condition.temp} °${info.units.temperature}`, true)
@@ -24,9 +24,8 @@ module.exports.run = function(client, message, args) {
             }
         } catch (err) {
             console.error(err);
-            message.channel.send("**An error has occurred**");
         }
-    }
+    };
     request();
 };
 
