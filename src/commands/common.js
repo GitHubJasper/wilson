@@ -71,7 +71,6 @@ function generateList(appidsUser, otherid, userdata, callbackFunction){
             otherdata.response.games.forEach((game, _) => {
                 appidsOther.push(game.appid);
             });
-            console.log(appidsOther);
             let commonIds = appidsUser.filter((id) => {
                 return (appidsOther.indexOf(id) > -1)
             });
