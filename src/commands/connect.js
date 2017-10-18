@@ -16,8 +16,28 @@ module.exports.run = (client, message, args) => {
     if (!user) {
         user = message.author;
     }
+    steamid = args[0]
+    addUserID(user, message, steamid, addStrictUserID);
+};
+
+function addUserID(user, message, id, addStrict){
+    api.resolveVanityURL({
+        vanityurl: id,
+        callback: function(err, data) {
+            if (err) console.error(err);
+            steamid = id
+            if(data.response.success == 1){
+                steamid = data.response.steamid
+                console.log(steamid);
+            }
+            addStrict(user, message, steamid);
+        }
+    })
+}
+
+function addStrictUserID(user, message, steamid){
     api.getPlayerSummaries({
-        steamids: args[0],
+        steamids: steamid,
         callback: function (err, data) {
             if (err) console.error(err);
             let player = data.response.players[0];
@@ -42,8 +62,7 @@ module.exports.run = (client, message, args) => {
             message.channel.send(embed);
         }
     })
-};
-
+}
 module.exports.help = {
     name: "Connect",
     command: "connect",
