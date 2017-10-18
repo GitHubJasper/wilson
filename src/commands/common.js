@@ -32,18 +32,41 @@ module.exports.run = (client, message, args) => {
         return;
     };
     getCommonList(steamid, otherid, function sendMessage(list){
-        let counter = 0;
-        let msg = "";
-        while (msg.length + list[counter].name.length < 500) {
-            msg = msg.concat(`${list[counter].name}\n`);
-            counter++;
+        if(args[1]){
+            getGameTags(list, function (tagList){
+                let matchList = [];
+                tagList.forEach(function(element) {
+                    if(element.tags.indexOf(args[1]) != -1) {
+                        matchList.push(element.game);
+                    }
+                });
+                let counter = 0;
+                let msg = "";
+                while (msg.length + matchList[counter].name.length < 500) {
+                    msg = msg.concat(`${matchList[counter].name}\n`);
+                    counter++;
+                }
+                let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${matchList.length} games in common`);
+                embed.setDescription(msg);
+                if (counter < matchList.length) {
+                    embed.setFooter(`Only showing ${counter} out of ${matchList.length} games`)
+                }
+                message.channel.send(embed);
+            })
+        } else{
+            let counter = 0;
+            let msg = "";
+            while (msg.length + list[counter].name.length < 500) {
+                msg = msg.concat(`${list[counter].name}\n`);
+                counter++;
+            }
+            let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
+            embed.setDescription(msg);
+            if (counter < list.length) {
+                embed.setFooter(`Only showing ${counter} out of ${list.length} games`)
+            }
+            message.channel.send(embed);
         }
-        let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
-        embed.setDescription(msg);
-        if (counter < list.length) {
-            embed.setFooter(`Only showing ${counter} out of ${list.length} games`)
-        }
-        message.channel.send(embed);
     });    
 };
 
@@ -82,12 +105,39 @@ function generateList(appidsUser, otherid, userdata, callbackFunction){
     })
 }
 
+function getGameTags(gameList, callback){
+    let tagList = [];
+    recursiveTaggCollector(gameList,tagList,0,callback)
+}
+function recursiveTaggCollector(list, tagList, index, callback){
+    if(list.length == index){
+        callback(tagList);
+    } else{
+        currentGame = list[index];
 
+        console.log(index);
+        tinyreq("http://store.steampowered.com/app/" + currentGame.appid + "/", function(err, body) {
+            let $ = cheerio.load(body);
+            var currentTags = $("a.app_tag").text().replace(/\t/g,'').split("\n");
+            currentTags.shift();
 
+            gameTag = {
+                game: currentGame,
+                tags: currentTags
+            }
+            tagList.push(gameTag);
+            recursiveTaggCollector(list, tagList, index + 1, callback);
+        });
+    }
+}
+
+/**
+ * Load app page and give tags to callback function
+ */
 module.exports.help = {
     name: "Common",
     command: "common",
-    required: 0,
-    optional: 1,
+    required: 1,
+    optional: 2,
     description: "Show which games you have in common."
 }
