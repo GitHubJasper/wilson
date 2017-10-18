@@ -77,7 +77,6 @@ function generateList(appidsUser, otherid, userdata, callbackFunction){
             list = userdata.response.games.filter((game) => {
                 return (appidsOther.indexOf(game.appid) > -1)
             });
-            console.log(list);
             callbackFunction(list);
         }
     })
