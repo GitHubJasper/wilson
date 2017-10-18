@@ -31,6 +31,23 @@ module.exports.run = (client, message, args) => {
         message.channel.send("Other user has no steam profile connected!");
         return;
     };
+    getCommonList(steamid, otherid, function sendMessage(list){
+        let counter = 0;
+        let msg = "";
+        while (msg.length + list[counter].name.length < 500) {
+            msg = msg.concat(`${list[counter].name}\n`);
+            counter++;
+        }
+        let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
+        embed.setDescription(msg);
+        if (counter < list.length) {
+            embed.setFooter(`Only showing ${counter} out of ${list.length} games`)
+        }
+        message.channel.send(embed);
+    });    
+};
+
+function getCommonList(steamid, otherid, callbackFunction){
     api.getOwnedGames({
         steamid: steamid,
         include_appinfo: 1,
@@ -39,39 +56,35 @@ module.exports.run = (client, message, args) => {
             userdata.response.games.forEach((game, _) => {
                 appidsUser.push(game.appid);
             });
-            api.getOwnedGames({
-                steamid: otherid,
-                include_appinfo: 1,
-                callback: (err, otherdata) => {
-                    let appidsOther = [];
-                    otherdata.response.games.forEach((game, _) => {
-                        appidsOther.push(game.appid);
-                    });
-                    console.log(appidsOther);
-                    let commonIds = appidsUser.filter((id) => {
-                        return (appidsOther.indexOf(id) > -1)
-                    });
-                    let list = userdata.response.games.filter((game) => {
-                        return (appidsOther.indexOf(game.appid) > -1)
-                    });
-
-                    let counter = 0;
-                    let msg = "";
-                    while (msg.length + list[counter].name.length < 500) {
-                        msg = msg.concat(`${list[counter].name}\n`);
-                        counter++;
-                    }
-                    let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
-                    embed.setDescription(msg);
-                    if (counter < list.length) {
-                        embed.setFooter(`Only showing ${counter} out of ${list.length} games`)
-                    }
-                    message.channel.send(embed);
-                }
-            })
+            list = generateList(appidsUser,otherid, userdata, callbackFunction);
         }
     });
-};
+}
+
+function generateList(appidsUser, otherid, userdata, callbackFunction){
+    let list
+    api.getOwnedGames({
+        steamid: otherid,
+        include_appinfo: 1,
+        callback: (err, otherdata) => {
+            let appidsOther = [];
+            otherdata.response.games.forEach((game, _) => {
+                appidsOther.push(game.appid);
+            });
+            console.log(appidsOther);
+            let commonIds = appidsUser.filter((id) => {
+                return (appidsOther.indexOf(id) > -1)
+            });
+            list = userdata.response.games.filter((game) => {
+                return (appidsOther.indexOf(game.appid) > -1)
+            });
+            console.log(list);
+            callbackFunction(list);
+        }
+    })
+}
+
+
 
 module.exports.help = {
     name: "Common",
