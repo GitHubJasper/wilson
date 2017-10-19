@@ -10,12 +10,12 @@ const client = new Discord.Client();
 
 client.commands = new Discord.Collection();
 
-fs.readdir("./src/commands", (err, files) => {
+fs.readdir(`${__dirname}/commands`, (err, files) => {
     if (err) console.error(err);
     files.forEach((file, i) => {
         console.log(file);
         if (file.split(".")[1] !== "js") return;
-        let cmd = require(`./commands/${file}`);
+        let cmd = require(`${__dirname}/commands/${file}`);
         if (cmd.help) {
             client.commands.set(cmd.help.command, cmd);
         };

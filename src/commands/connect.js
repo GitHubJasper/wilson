@@ -3,8 +3,9 @@ const sql = require("sqlite");
 const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
+const path = require("path");
 
-var db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
+var db = [];
 
 const api = new steam({
     apiKey: auth.key,
@@ -12,12 +13,13 @@ const api = new steam({
 });
 
 module.exports.run = (client, message, args) => {
+    db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
     let user = message.mentions.users.first();
     if (!user) {
         user = message.author;
     }
-    steamid = args[0]
-    addUserID(user, message, steamid, addStrictUserID);
+    steamid = args[0];
+    addUserID(user, message, steamid, addStrictUserID, db);
 };
 
 function addUserID(user, message, id, addStrict){
@@ -52,7 +54,7 @@ function addStrictUserID(user, message, steamid){
                 db[user.id] = {
                     steamid: player.steamid
                 };
-                fs.writeFile("./src/data.json", JSON.stringify(db), (err) => {
+                fs.writeFile(path.join(__dirname, '../') + `data.json`, JSON.stringify(db), (err) => {
                     if (err) console.error(err);
                 });
             } else {

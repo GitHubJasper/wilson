@@ -2,11 +2,14 @@
   "name": "co-bot",
   "version": "0.0.1",
   "description": "The ultimate co-bot",
+  "main": "bot.js",
   "author": "Luke Prananta",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "discord.js": "^11.2.1",
     "sqlite": "^2.8.0",
     "steam-web": "^0.6.0",
+    "tinyreq": "^3.2.6",
     "yahoo-weather": "^2.2.2"
   }
 }
