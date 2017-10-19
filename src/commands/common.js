@@ -68,10 +68,12 @@ module.exports.run = (client, message, args) => {
 function getCommonTagList(steamid, otherid, args, callbackFunction){
     getCommonList(steamid, otherid, function sendMessage(list){
         if(args[1]){
+            expression = parseExp(args[1]);
+            console.log(expression);
             getGameTags(list, function (tagList){
                 let matchList = [];
                 tagList.forEach(function(element) {
-                    if(element.tags.indexOf(args[1]) != -1) {
+                    if(expression.operator(element.tags)) {
                         matchList.push(element.game);
                     }
                 });
@@ -154,6 +156,152 @@ function getGameTags(gameList, callback){
             }
         });
     });
+}
+
+
+/**
+ * Alles hieronder kan in een ander bestand (behalve de export)
+ * En had nog geen zin om te commenten dus helaas
+ */
+
+function parseExp(Exp){
+    let operator = parseGroup(Exp);
+    if(operator != null){
+        return operator;
+    }
+    operator = parseOr(Exp);
+    if(operator != null){
+        return operator;
+    }
+    operator = parseAnd(Exp);
+    if(operator != null){
+        return operator;
+    }
+    operator = parseInvert(Exp);
+    if(operator != null){
+        return operator;
+    }
+    if(!containForbidden(Exp)){
+        return new unOp(contain, Exp);
+    }
+    return null;
+}
+
+function containForbidden(Exp){
+    return Exp.indexOf('|') != -1 || Exp.indexOf('&') != -1 || Exp.indexOf('!') != -1 || Exp.indexOf(')') != -1 || Exp.indexOf('(') != -1;
+}
+
+function parseGroup(Exp){
+    if(Exp.charAt(0) == "(" && Exp.charAt(Exp.length - 1) == ')' && matchEndIndex(Exp) == Exp.length - 1){
+        return parseExp(Exp.substr(1, Exp.length -2));
+    }
+    return null;
+}
+function parseInvert(Exp){
+    if(Exp.charAt(0) == '!'){
+        let index = Exp.indexOf('!');
+        let subExp = parseExp(Exp.substr(index+1));
+        if(subExp != null){
+            return new unOp(invert, subExp);
+        }
+    }
+    return null;
+}
+function parseAnd(Exp){
+    if(Exp.indexOf('&') != -1){
+        let index = Exp.indexOf('&');
+        let firstExp = parseExp(Exp.substr(0,index));
+        let secondExp = parseExp(Exp.substr(index+1));
+        if(firstExp != null && secondExp != null){
+            return new binOp(and,firstExp,secondExp);
+        }
+    }
+    return null;
+}
+function parseOr(Exp){
+    if(Exp.indexOf('|') != -1){
+        let index = Exp.indexOf('|');
+        let firstExp = parseExp(Exp.substr(0,index));
+        let secondExp = parseExp(Exp.substr(index+1));
+        if(firstExp != null && secondExp != null){
+            return new binOp(or,firstExp,secondExp);
+        }
+    }
+    return null;
+}
+
+function matchEndIndex(string){
+    let counter = 0;
+    let index = 0;
+    while(index < string.length ){
+        currentChar = string.charAt(index);
+        if(currentChar == '('){
+            counter++;
+        } else if (currentChar == ')'){
+            counter--;
+        }
+        if(counter == 0){
+            return index;
+        }
+        index++;
+    }
+    return -1;
+
+}
+
+function binOp(operator, firstExp, secondExp){
+    this.operator = operator;
+    this.firstExp = firstExp;
+    this.secondExp = secondExp;
+}
+
+function unOp(operator, Exp){
+    this.operator = operator;
+    this.Exp = Exp;
+}
+
+function and(tags){
+    let first = false;
+    let second = false;
+    if(this.firstExp instanceof unOp){
+        first = this.firstExp.operator(tags, this.firstExp.Exp);
+    } else{
+        first = this.firstExp.operator(tags, this.firstExp.firstExp, this.firstExp.secondExp);
+    }
+
+    if(this.secondExp instanceof unOp){
+        second = this.secondExp.operator(tags, this.secondExp.Exp);
+    } else{
+        second = this.secondExp.operator(tags, this.secondExp.firstExp, this.secondExp.secondExp);
+    }
+    return first && second;
+}
+function or(tags){
+    let first = false;
+    let second = false;
+    if(this.firstExp instanceof unOp){
+        first = this.firstExp.operator(tags, this.firstExp.Exp);
+    } else{
+        first = this.firstExp.operator(tags, this.firstExp.firstExp, Exp.firstExp.secondExp);
+    }
+
+    if(this.secondExp instanceof unOp){
+        second = this.secondExp.operator(tags, this.secondExp.Exp);
+    } else{
+        second = this.secondExp.operator(tags, this.secondExp.firstExp, this.secondExp.secondExp);
+    }
+    return first || second;
+}
+
+function contain(tags){
+    if(tags.indexOf(this.Exp) != -1) {
+        return true;
+    }
+    return false;
+}
+
+function invert(tags){
+    return !this.Exp.operator(tags, this.Exp);
 }
 
 /**
