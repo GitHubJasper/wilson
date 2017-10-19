@@ -3,6 +3,8 @@ const sql = require("sqlite");
 const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
+const tinyreq = require("tinyreq");
+const cheerio = require("cheerio");
 
 var db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
 
@@ -31,29 +33,8 @@ module.exports.run = (client, message, args) => {
         message.channel.send("Other user has no steam profile connected!");
         return;
     };
-    getCommonList(steamid, otherid, function sendMessage(list){
-        if(args[1]){
-            getGameTags(list, function (tagList){
-                let matchList = [];
-                tagList.forEach(function(element) {
-                    if(element.tags.indexOf(args[1]) != -1) {
-                        matchList.push(element.game);
-                    }
-                });
-                let counter = 0;
-                let msg = "";
-                while (msg.length + matchList[counter].name.length < 500) {
-                    msg = msg.concat(`${matchList[counter].name}\n`);
-                    counter++;
-                }
-                let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${matchList.length} games in common`);
-                embed.setDescription(msg);
-                if (counter < matchList.length) {
-                    embed.setFooter(`Only showing ${counter} out of ${matchList.length} games`)
-                }
-                message.channel.send(embed);
-            })
-        } else{
+    getCommonTagList(steamid, otherid, args, function sendResult(list){
+        if(list.length > 0){
             let counter = 0;
             let msg = "";
             while (msg.length + list[counter].name.length < 500) {
@@ -66,10 +47,44 @@ module.exports.run = (client, message, args) => {
                 embed.setFooter(`Only showing ${counter} out of ${list.length} games`)
             }
             message.channel.send(embed);
+        } else{
+            message.channel.send("Sorry but you don't have anything in common :(");
         }
-    });    
+    });
 };
 
+/**
+ * Returns a list that two users have in common
+ * Matches tags if given
+ * @param {*} steamid First user id
+ * @param {*} otherid Second user id
+ * @param {*} args Comman tags
+ * @param {*} callbackFunction Function to give the list to
+ */
+function getCommonTagList(steamid, otherid, args, callbackFunction){
+    getCommonList(steamid, otherid, function sendMessage(list){
+        if(args[1]){
+            getGameTags(list, function (tagList){
+                let matchList = [];
+                tagList.forEach(function(element) {
+                    if(element.tags.indexOf(args[1]) != -1) {
+                        matchList.push(element.game);
+                    }
+                });
+                callbackFunction(matchList);
+            })
+        } else{
+            callbackFunction(list);
+        }
+    });
+}
+
+/**
+ * Gets a list of games two users have in common
+ * @param {*} steamid First user id
+ * @param {*} otherid Second user id
+ * @param {*} callbackFunction Function to give the list to
+ */
 function getCommonList(steamid, otherid, callbackFunction){
     api.getOwnedGames({
         steamid: steamid,
@@ -79,12 +94,19 @@ function getCommonList(steamid, otherid, callbackFunction){
             userdata.response.games.forEach((game, _) => {
                 appidsUser.push(game.appid);
             });
-            list = generateList(appidsUser,otherid, userdata, callbackFunction);
+            generateList(appidsUser, userdata, otherid, callbackFunction);
         }
     });
 }
 
-function generateList(appidsUser, otherid, userdata, callbackFunction){
+/**
+ * Generates a list of common game list from a users games and another users steam id
+ * @param {*} appidsUser Appids from first user
+ * @param {*} userdata userdata from first user
+ * @param {*} otherid Second user id
+ * @param {*} callbackFunction Function to give the list to
+ */
+function generateList(appidsUser, userdata, otherid, callbackFunction){
     let list
     api.getOwnedGames({
         steamid: otherid,
@@ -105,20 +127,17 @@ function generateList(appidsUser, otherid, userdata, callbackFunction){
     })
 }
 
+/**
+ * Gets all tags from a list of gameids
+ * @param {*} gameList The gameid list
+ * @param {*} callback Function to give the list to
+ */
 function getGameTags(gameList, callback){
     let tagList = [];
-    recursiveTaggCollector(gameList,tagList,0,callback)
-}
-function recursiveTaggCollector(list, tagList, index, callback){
-    if(list.length == index){
-        callback(tagList);
-    } else{
-        currentGame = list[index];
-
-        console.log(index);
+    gameList.forEach(function(currentGame) {
         tinyreq("http://store.steampowered.com/app/" + currentGame.appid + "/", function(err, body) {
             let $ = cheerio.load(body);
-            var currentTags = $("a.app_tag").text().replace(/\t/g,'').split("\n");
+            var currentTags = $("a.app_tag").text().toLowerCase().replace(/\t| /g,'').split("\n");
             currentTags.shift();
 
             gameTag = {
@@ -126,9 +145,11 @@ function recursiveTaggCollector(list, tagList, index, callback){
                 tags: currentTags
             }
             tagList.push(gameTag);
-            recursiveTaggCollector(list, tagList, index + 1, callback);
+            if(tagList.length == gameList.length){
+                callback(tagList);
+            }
         });
-    }
+    });
 }
 
 /**
