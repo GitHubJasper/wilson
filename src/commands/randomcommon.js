@@ -15,9 +15,15 @@ const api = new steam({
 module.exports.run = (client, message, args) => {
     db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
     let user = message.author;
+    let other = message.mentions.users.first();
     let steamid = db[user.id].steamid;
+    let otherid = db[other.id].steamid;
     if (!steamid) {
         message.channel.send("Please connect your steam profile first!");
+        return;
+    };
+    if (!otherid) {
+        message.channel.send("Other user has no steam profile connected!");
         return;
     };
     api.getOwnedGames({
