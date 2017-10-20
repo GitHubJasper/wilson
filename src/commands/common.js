@@ -4,8 +4,9 @@ const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const steam_extended = require("../utility/steam-web-extended.js");
+const path = require("path");
 
-var db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
+var db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
 
 const api = new steam({
     apiKey: auth.key,
@@ -36,11 +37,14 @@ module.exports.run = (client, message, args) => {
         if(list.length > 0){
             let counter = 0;
             let msg = "";
-            while (msg.length + list[counter].name.length < 500) {
+            while (counter < list.length && msg.length + list[counter].name.length < 2000) {
                 msg = msg.concat(`${list[counter].name}\n`);
                 counter++;
             }
             let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
+            if (args[1]) {
+                embed.setTitle(`${other.tag} has ${list.length} games in common with the tag "${args[1]}"`)
+            }
             embed.setDescription(msg);
             if (counter < list.length) {
                 embed.setFooter(`Only showing ${counter} out of ${list.length} games`)

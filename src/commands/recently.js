@@ -3,8 +3,9 @@ const sql = require("sqlite");
 const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
+const path = require("path");
 
-var db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
+var db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
 
 const api = new steam({
     apiKey: auth.key,
