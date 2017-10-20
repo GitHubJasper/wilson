@@ -26,7 +26,7 @@ module.exports = {
         }
         if(!containForbidden(stringExp)){
             if(this.custom != null){
-                return new costumUnOp(customContainMatch, stringExp, this.custom);
+                return new customUnOp(customContainMatch, stringExp, this.custom);
             } else{
                 return new unOp(contain, stringExp);
             }

@@ -17,11 +17,11 @@ module.exports = {
      * @param {*} args Comman tags
      * @param {*} callbackFunction Function to give the list to
      */
-    getCommonTagList : function(steamid, otherid, tagString, callbackFunction){
+    getCommonTagList : function(steamid, otherid, args, callbackFunction){
         let tagFunction = this.getGameTags;
         this.getCommonList(steamid, otherid, function sendMessage(list){
             if(args[1]){
-                let expression = bf.parseExp(tagString, (game,tag) => game.tags.indexOf(tag) != -1);
+                let expression = bf.parseExp(args[1], (game,tag) => game.tags.indexOf(tag) != -1);
                 if(expression == null){
                     callbackFunction([]);
                 }else{
