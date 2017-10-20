@@ -23,7 +23,7 @@ module.exports = {
             if(args[1]){
                 let expression = bf.parseExp(args[1], (game,tag) => game.tags.indexOf(tag) != -1);
                 if(expression == null){
-                    callbackFunction([]);
+                    callbackFunction([],1);
                 }else{
                     tagFunction(list, function (tagList){
                         let matchList = tagList.filter(x => expression.match(x));

@@ -33,8 +33,12 @@ module.exports.run = (client, message, args) => {
         message.channel.send("Other user has no steam profile connected!");
         return;
     };
-    steam_extended.getCommonTagList(steamid, otherid, args, function sendResult(list){
-        if(list.length > 0){
+    
+    steam_extended.getCommonTagList(steamid, otherid, args, function sendResult(list, error){
+        if (error == 1) {
+            message.channel.send("Hm i can not parse that expression...");
+            return;
+        } else if(list.length > 0){
             let counter = 0;
             let msg = "";
             while (counter < list.length && msg.length + list[counter].name.length < 2000) {

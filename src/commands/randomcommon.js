@@ -26,28 +26,27 @@ module.exports.run = (client, message, args) => {
         message.channel.send("Other user has no steam profile connected!");
         return;
     };
-    api.getOwnedGames({
-        steamid: steamid,
-        include_appinfo: 1,
-        callback: function (err, data) {
-            if (err) {
-                console.error(err)
-                return;
-            }
-            let pick = data.response.games[Math.ceil(Math.random() * (data.response.game_count - 1))];
-            let embed = new Discord.RichEmbed().setTitle(`Random game from your library`);
+    steam_extended.getCommonTagList(steamid, otherid, args, function sendResult(list, error){
+        if (error == 1) {
+            message.channel.send("Hm i can not parse that expression...");
+            return;
+        } else if(list.length > 0){
+            let pick = list[Math.ceil(Math.random() * (list.length - 1))];
+            let embed = new Discord.RichEmbed().setTitle(`Random game you have in common`);
             embed.setDescription("RNGsus has decided that you will play...");
-            embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
+            embed.addField(`${pick.name}`, `you played it for: ${pick.playtime_forever} minutes`);
             embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
             message.channel.send(embed);
+        } else{
+            message.channel.send("Sorry but you don't have anything in common :(");
         }
     })
 };
 
 module.exports.help = {
-    name: "Randomgame",
-    command: "randomgame",
-    required: 0,
-    optional: 1,
-    description: "Pick a random game from your library."
+    name: "Randomcommon",
+    command: "randomcommon",
+    required: 1,
+    optional: 2,
+    description: "Pick a random game that you have in common with anoth user."
 }
