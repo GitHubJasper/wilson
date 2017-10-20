@@ -4,6 +4,8 @@ const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
+const steam_extended = require("../utility/steam-web-extended.js");
+const bf = require("../utility/binaryFilter.js");
 
 var db = [];
 
@@ -31,20 +33,44 @@ module.exports.run = (client, message, args) => {
                 console.error(err)
                 return;
             }
-            let counter = 0;
-            let count = data.response.game_count;
-            let list = data.response.games;
-            let msg = "";
-            while (msg.length + list[counter].name.length < 500) {
-                msg = msg.concat(`${list[counter].name}\n`);
-                counter++;
+            if(args[0] != null){
+                let expression = bf.parseExp(args[0], (game,tag) => game.tags.indexOf(tag) != -1);
+                if(expression == null){
+                    message.channel.send("Hm i can not parse that expression...");
+                    return;
+                }
+                steam_extended.getGameTags(data.response.games, function(list, error){
+                    let gameList = list.filter(x => expression.match(x));
+                    let counter = 0;
+                    let count = gameList.length;
+                    let msg = "";
+                    while (counter < gameList.length && msg.length + gameList[counter].name.length < 2000) {
+                        msg = msg.concat(`${gameList[counter].name}\n`);
+                        counter++;
+                    }
+                    let embed = new Discord.RichEmbed().setTitle(`${count} Games`);
+                    embed.setDescription(msg);
+                    if (counter < count) {
+                        embed.setFooter(`Only showing ${counter} out of ${count} games`)
+                    }
+                    message.channel.send(embed);
+                });
+            } else{
+                let list = data.response.games;
+                let counter = 0;
+                let count = list.length;
+                let msg = "";
+                while (counter < list.length && msg.length + list[counter].name.length < 2000) {
+                    msg = msg.concat(`${list[counter].name}\n`);
+                    counter++;
+                }
+                let embed = new Discord.RichEmbed().setTitle(`${count} Games`);
+                embed.setDescription(msg);
+                if (counter < count) {
+                    embed.setFooter(`Only showing ${counter} out of ${count} games`)
+                }
+                message.channel.send(embed);
             }
-            let embed = new Discord.RichEmbed().setTitle(`${count} Games`);
-            embed.setDescription(msg);
-            if (counter < count) {
-                embed.setFooter(`Only showing ${counter} out of ${count} games`)
-            }
-            message.channel.send(embed);
         }
     })
 };
