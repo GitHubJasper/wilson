@@ -5,10 +5,10 @@ const fs = require("fs");
 const path = require("path");
 const steam_extended = require("../utility/steam-web-extended");
 
-var db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
+var db = [];
 
 module.exports.run = (client, message, args) => {
-    db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
+    db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
     let user = message.author;
     let steamid = db[user.id].steamid;
     

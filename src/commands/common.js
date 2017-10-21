@@ -20,7 +20,7 @@ const api = new steam({
 *
  */
 module.exports.run = (client, message, args) => {
-    db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
+    db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
     let user = message.author;
     let other = message.mentions.users.first();
     if (!other) return;
