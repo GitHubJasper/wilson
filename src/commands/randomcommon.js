@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const sql = require("sqlite");
+const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
