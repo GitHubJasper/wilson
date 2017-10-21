@@ -65,5 +65,9 @@ module.exports.help = {
     command: "randomcommon",
     required: 1,
     optional: 2,
-    description: "Pick a random game that you have in common with another user."
+    description: "Pick a random game that you have in common with another user.",
+    parameters: [
+        ["user"],
+        ["user", "tags"]
+    ]
 }

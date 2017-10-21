@@ -38,6 +38,26 @@ client.on('message', (message) => {
     }
 
     //fluff
+    if (message.content.toLowerCase() === '!help') {
+        let map_itr = client.commands.values();
+        let next = map_itr.next().value;
+        let embed = new Discord.RichEmbed();
+        embed.setTitle("Commands");
+        msg = "";
+        while(next != null) {
+            next.help.parameters.forEach(function(commandTypes) {
+                msg += "**!" + next.help.command;
+                commandTypes.forEach(function(parameter) {
+                    msg += " <" + parameter + ">";
+                });
+                msg += "**\n";
+            });
+            msg += "\t" + next.help.description + "\n \n";
+            next = map_itr.next().value;
+        }
+        embed.setDescription(msg);
+        message.channel.send(embed);
+    }
     if (message.content.toUpperCase() === 'MARCO') {
        message.channel.send('**Polo!**');
     };

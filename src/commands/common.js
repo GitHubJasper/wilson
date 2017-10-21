@@ -84,5 +84,9 @@ module.exports.help = {
     command: "common",
     required: 1,
     optional: 2,
-    description: "Show which games you have in common."
+    description: "Show which games you have in common.",
+    parameters: [
+        ["user"],
+        ["user", "tags"]
+    ]
 }

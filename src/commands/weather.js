@@ -33,5 +33,9 @@ module.exports.run = function(client, message, args) {
 module.exports.help = {
     name: "Weather",
     command: "weather",
-    required: 1
+    required: 1,
+    description: "Give a quick weather report of a City.",
+    parameters: [
+        ["location"]
+    ]
 }

@@ -71,5 +71,10 @@ module.exports.help = {
     command: "library",
     required: 0,
     optional: 2,
-    description: "Show the games you own on steam."
+    description: "Show the games you own on steam.",
+    parameters: [
+        [],
+        ["user"],
+        ["user", "tags"]
+    ]
 }
