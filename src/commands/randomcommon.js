@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const sql = require("sqlite");
-const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
@@ -19,29 +18,45 @@ module.exports.run = (client, message, args) => {
     let other = message.mentions.users.first();
     let steamid = db[user.id].steamid;
     let otherid = db[other.id].steamid;
-    if (!steamid) {
-        message.channel.send("Please connect your steam profile first!");
-        return;
-    };
-    if (!otherid) {
-        message.channel.send("Other user has no steam profile connected!");
-        return;
-    };
-    steam_extended.getCommonTagList(steamid, otherid, args, function sendResult(list, error){
-        if (error == 1) {
-            message.channel.send("I can't parse that expression...");
-            return;
-        } else if(list.length > 0){
-            let pick = list[Math.ceil(Math.random() * (list.length - 1))];
-            let embed = new Discord.RichEmbed().setTitle(`Random game you have in common`);
-            embed.setDescription("RNGsus has decided that you will play...");
-            embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
-            embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
-            message.channel.send(embed);
-        } else{
-            message.channel.send("Sorry but you don't have anything in common :(");
+
+    steam_extended.getCommonList({
+        firstID : steamid, 
+        secondID : otherid, 
+        tagStringExp : args[1], 
+        callback : function sendResult(list, error){
+            switch(error){
+                case 0:
+                    let pick = list[Math.ceil(Math.random() * (list.length - 1))];
+                    let embed = new Discord.RichEmbed().setTitle(`Random game you have in common`);
+                    embed.setDescription("RNGsus has decided that you will play... \n[Launch game](steam://run/" + pick.appid + ")");
+                    embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
+                    embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
+                    message.channel.send(embed);
+                break;
+                case 1:
+                    message.channel.send("Lol buy some games bruh @" + user);
+                break;
+                case 2:
+                    message.channel.send("Lol buy some games bruh @" + other);
+                break;
+                case 3:
+                    message.channel.send("Sorry but you don't have anything in common :(");
+                break;
+                case 4:
+                    message.channel.send(`You have no games in common given the tags "${args[1]}"`);
+                break;
+                case -1:
+                    message.channel.send("Could not find the steam account of " + user + " \nUse '!connect <steamid>' to connect your steam account");
+                break;
+                case -2:
+                message.channel.send("Could not find the steam account of " + other + "\nUse '!connect <steamid>' to connect your steam account");
+                break;
+                case -3:
+                    message.channel.send("Hm I can not parse that expression...");
+                break;
+            };
         }
-    })
+    });
 };
 
 module.exports.help = {

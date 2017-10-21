@@ -5,6 +5,9 @@ module.exports = {
      * @param {*} custom 
      */
     parseExp : function(stringExp, custom){
+        if(stringExp == null){
+            return new unOp(source => true);
+        }
         if(custom != null){
             this.custom = custom;
         }
