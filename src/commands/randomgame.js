@@ -47,7 +47,10 @@ module.exports.help = {
     command: "randomgame",
     required: 0,
     optional: 1,
-    description: "Pick a random game from your library.",
+    description: [
+        "Pick a random game from your library.",
+        "Pick a random game from your library given a set of tags. \n\tYou can combine tags like: co-op&multiplayer&!(fps|3dperson)"
+    ],
     parameters: [
         [],
         ["tags"]
