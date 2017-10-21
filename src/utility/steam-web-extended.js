@@ -37,6 +37,11 @@ module.exports = {
         getCommonGames(options.firstID, options.secondID, function sendMessage(list, error){
             if(error != 0) {
                 options.callback([], error);
+                return;
+            }
+            if(options.tagStringExp == null){
+                options.callback(list, error);
+                return;
             }
             let expression = bf.parseExp(options.tagStringExp.toLowerCase(), (game,tag) => game.tags.indexOf(tag) != -1);
             if(expression == null) {
@@ -83,6 +88,10 @@ module.exports = {
                 gameList = data.response.games;
                 if (gameList.length == 0){
                     options.callback(gameList, 1);
+                    return;
+                }
+                if(options.tagStringExp == null){
+                    options.callback(gameList, 0);
                     return;
                 }
                 let expression = bf.parseExp(options.tagStringExp.toLowerCase(), (game,tag) => game.tags.indexOf(tag) != -1);
