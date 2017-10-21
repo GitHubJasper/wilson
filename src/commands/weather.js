@@ -18,6 +18,7 @@ module.exports.run = function(client, message, args) {
                     .addField('Wind Speed', `${info.wind.speed} ${info.units.speed}`, true)
                     .addField('Humidity', `${info.atmosphere.humidity}%`, true)
                     .addField('Condition', info.item.condition.text, true)
+                    .addField('Full Report', info.item.link.split('*')[1], false)
                 message.channel.send(embed);
             } else {
                 message.channel.send("No data!");
