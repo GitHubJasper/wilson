@@ -13,6 +13,7 @@ const api = new steam({
 });
 
 module.exports.run = (client, message, args) => {
+    db = JSON.parse(fs.readFileSync("./src/data.json", "utf8"));
     let user = message.author;
     let steamid = db[user.id].steamid;
     if (!steamid) {
