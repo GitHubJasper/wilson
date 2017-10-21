@@ -4,6 +4,7 @@ const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
+const steam_extended = require("../utility/steam-web-extended");
 
 var db = [];
 
@@ -28,13 +29,13 @@ module.exports.run = (client, message, args) => {
     };
     steam_extended.getCommonTagList(steamid, otherid, args, function sendResult(list, error){
         if (error == 1) {
-            message.channel.send("Hm i can not parse that expression...");
+            message.channel.send("I can't parse that expression...");
             return;
         } else if(list.length > 0){
             let pick = list[Math.ceil(Math.random() * (list.length - 1))];
             let embed = new Discord.RichEmbed().setTitle(`Random game you have in common`);
             embed.setDescription("RNGsus has decided that you will play...");
-            embed.addField(`${pick.name}`, `you played it for: ${pick.playtime_forever} minutes`);
+            embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
             embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
             message.channel.send(embed);
         } else{
@@ -48,5 +49,5 @@ module.exports.help = {
     command: "randomcommon",
     required: 1,
     optional: 2,
-    description: "Pick a random game that you have in common with anoth user."
+    description: "Pick a random game that you have in common with another user."
 }

@@ -1,10 +1,11 @@
 const bf = require("./binaryFilter.js");
 const steam = require("steam-web");
+const auth = require("../auth.json");
 const tinyreq = require("tinyreq");
 const cheerio = require("cheerio");
 
 const api = new steam({
-    apiKey: "AA8856F9EA1EAC65DD3B09DD9077995C",
+    apiKey: auth.key,
     format: "json"
 });
 
