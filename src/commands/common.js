@@ -66,7 +66,7 @@ module.exports.run = (client, message, args) => {
                     message.channel.send("Could not find the steam account of " + user + " \nUse '!connect <steamid>' to connect your steam account");
                 break;
                 case -2:
-                message.channel.send("Could not find the steam account of " + other + "\nUse '!connect <steamid>' to connect your steam account");
+                    message.channel.send("Could not find the steam account of " + other + "\nUse '!connect <steamid>' to connect your steam account");
                 break;
                 case -3:
                     message.channel.send("Hm I can not parse that expression...");
