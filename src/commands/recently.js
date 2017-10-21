@@ -47,5 +47,9 @@ module.exports.help = {
     command: "recently",
     required: 0,
     optional: 1,
-    description: "Show recently played games."
+    description: "Show recently played games.",
+    parameters: [
+        [],
+        ["user"]
+    ]
 }

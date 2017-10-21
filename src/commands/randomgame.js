@@ -47,5 +47,9 @@ module.exports.help = {
     command: "randomgame",
     required: 0,
     optional: 1,
-    description: "Pick a random game from your library."
+    description: "Pick a random game from your library.",
+    parameters: [
+        [],
+        ["tags"]
+    ]
 }

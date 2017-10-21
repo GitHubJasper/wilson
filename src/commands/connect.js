@@ -69,5 +69,9 @@ module.exports.help = {
     name: "Connect",
     command: "connect",
     required: 1,
-    optional: 1
+    optional: 1,
+    description: "Binds a steam account to a user.",
+    parameters: [
+        ["steamid"]
+    ]
 }

@@ -6,5 +6,7 @@ module.exports.run = (client, message, args) => {
 module.exports.help = {
     name: "Ping",
     command: "ping",
-    required: 1
+    required: 0,
+    description: "1. Ping \n\t2. Pong. \n\t3. ??? \n\t4. PROFIT!!!",
+    parameters: [[]]
 }
