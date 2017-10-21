@@ -63,10 +63,10 @@ module.exports.run = (client, message, args) => {
                     message.channel.send(`You have no games in common given the tags "${args[1]}"`);
                 break;
                 case -1:
-                    message.channel.send("Could not find the steam account of " + user + " \n Use '!connect <steamid>' to connect your steam account");
+                    message.channel.send("Could not find the steam account of " + user + " \nUse '!connect <steamid>' to connect your steam account");
                 break;
                 case -2:
-                message.channel.send("Could not find the steam account of " + other + "\n Use '!connect <steamid>' to connect your steam account");
+                message.channel.send("Could not find the steam account of " + other + "\nUse '!connect <steamid>' to connect your steam account");
                 break;
                 case -3:
                     message.channel.send("Hm I can not parse that expression...");

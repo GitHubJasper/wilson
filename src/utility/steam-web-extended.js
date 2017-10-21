@@ -38,7 +38,7 @@ module.exports = {
             if(error != 0) {
                 options.callback([], error);
             }
-            let expression = bf.parseExp(options.tagStringExp, (game,tag) => game.tags.indexOf(tag) != -1);
+            let expression = bf.parseExp(options.tagStringExp.toLowerCase(), (game,tag) => game.tags.indexOf(tag) != -1);
             if(expression == null) {
                 options.callback([], -3);
             }else {
@@ -85,7 +85,7 @@ module.exports = {
                     options.callback(gameList, 1);
                     return;
                 }
-                let expression = bf.parseExp(options.tagStringExp, (game,tag) => game.tags.indexOf(tag) != -1);
+                let expression = bf.parseExp(options.tagStringExp.toLowerCase(), (game,tag) => game.tags.indexOf(tag) != -1);
                 if(expression == null){
                     options.callback([], -3);
                     return;
