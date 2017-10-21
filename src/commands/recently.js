@@ -5,7 +5,7 @@ const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
 
-var db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
+var db = [];
 
 const api = new steam({
     apiKey: auth.key,
@@ -13,6 +13,7 @@ const api = new steam({
 });
 
 module.exports.run = (client, message, args) => {
+    db = JSON.parse(fs.readFileSync(path.join(__dirname, '../') + `data.json`, "utf8"));
     let user = message.mentions.users.first();
     if (!user) {
         user = message.author;
