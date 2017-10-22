@@ -10,6 +10,7 @@ module.exports.run = function(client, message, args) {
                 let embed = new Discord.RichEmbed();
                 embed
                     .setTitle(`Weather in ${info.location.city}, ${info.location.country}`)
+                    .setURL(info.item.link.split('*')[1])
                     .setDescription(`${info.item.title}`)
                     .setFooter(`Weather data obtained from ${info.image.title}`)
                     .addField('Maximum', `${info.item.forecast[0].high} °${info.units.temperature}`, true)
@@ -17,8 +18,7 @@ module.exports.run = function(client, message, args) {
                     .addField('Recent', `${info.item.condition.temp} °${info.units.temperature}`, true)
                     .addField('Wind Speed', `${info.wind.speed} ${info.units.speed}`, true)
                     .addField('Humidity', `${info.atmosphere.humidity}%`, true)
-                    .addField('Condition', info.item.condition.text, true)
-                    .addField('Full Report', info.item.link.split('*')[1], false)
+                    .addField('Condition', info.item.condition.text, true);
                 message.channel.send(embed);
             } else {
                 message.channel.send("No data!");

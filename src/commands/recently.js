@@ -33,6 +33,7 @@ module.exports.run = (client, message, args) => {
             let count = data.response.total_count;
             let list = data.response.games;
             let embed = new Discord.RichEmbed().setTitle(`Recently Played`);
+            embed.setColor(`#00adee`);
             embed.setDescription(`Showing games played by ${user.tag} in the last two weeks`)
             list.forEach((game, i) => {
                 embed.addField(game.name, `${game.playtime_2weeks} minutes`);

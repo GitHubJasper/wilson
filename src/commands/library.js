@@ -34,6 +34,7 @@ module.exports.run = (client, message, args) => {
                 case 0:
                     let counter = 0;
                     let embed = new Discord.RichEmbed().setTitle(`${list.length} Games`);
+                    embed.setColor(`#00adee`);
                     if (tags != null){
                         embed.title = embed.title + ` that match "${tags}"`;
                     }
