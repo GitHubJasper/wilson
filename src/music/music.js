@@ -170,10 +170,10 @@ module.exports.commands = [
             if (queue.length > 0 || current !== null) {
                 let list = "";
                 if (current) {
-                    list = list.concat(`1. ${current.title} (${current.user})\n`)
+                    list = list.concat(`1. [${current.title}](${current.url})\n`)
                 }
                 queue.forEach((song, index) => {
-                    list = list.concat(`${index + 2}. ${song.title} (${song.user})\n`);
+                    list = list.concat(`${index + 2}. [${song.title}](${song.url})\n`);
                 });
                 embed.setDescription(list);
             } else {
@@ -202,10 +202,10 @@ function play(client) {
     current = queue[0];
 
     notification
-        .setTitle(queue[0].title)
+        .setTitle(current.title)
         .setAuthor("Now playing")
-        .setURL(queue[0].url)
-        .setFooter(`Added by ${queue[0].user}`);
+        .setURL(current.url)
+        .setFooter(`Added by ${current.user}`);
 
     update(channel);
 
