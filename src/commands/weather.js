@@ -34,7 +34,9 @@ module.exports.help = {
     name: "Weather",
     command: "weather",
     required: 1,
-    description: "Give a quick weather report of a City.",
+    description: [
+        "Give a quick weather report of a city."
+    ],
     parameters: [
         ["location"]
     ]
