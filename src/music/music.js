@@ -113,9 +113,14 @@ module.exports.commands = [
     {
         command: "playing",
         run: (client, msg, args) => {
-            notification
-                .setAuthor("Now playing");
-            update(msg.channel);
+            if (current) {
+                notification
+                    .setTitle(current.title)
+                    .setAuthor("Now playing")
+                    .setURL(current.url)
+                    .setFooter(`Added by ${current.user}`);
+                update(msg.channel);
+            }
             msg.delete();
         }
     },
@@ -126,6 +131,7 @@ module.exports.commands = [
             channel.join()
                 .then(obj => {connection = obj;})
                 .catch(console.error);
+            msg.delete();
         }
     },
     {
@@ -136,6 +142,7 @@ module.exports.commands = [
                     .leave();
                 connection = null;
             }
+            msg.delete();
         }
     },
     {
@@ -152,6 +159,7 @@ module.exports.commands = [
                     connection = obj;
                 })
                 .catch(console.error);
+            msg.delete();
         }
     },
     {
@@ -162,17 +170,17 @@ module.exports.commands = [
             if (queue.length > 0 || current !== null) {
                 let list = "";
                 if (current) {
-                    list = list.concat(`1. ${current.title}, added by ${current.user}\n`)
+                    list = list.concat(`1. ${current.title} (${current.user})\n`)
                 }
                 queue.forEach((song, index) => {
-                    list = list.concat(`${index + 2}. ${song.title}, added by ${song.user}\n`);
+                    list = list.concat(`${index + 2}. ${song.title} (${song.user})\n`);
                 });
                 embed.setDescription(list);
             } else {
                 embed.setTitle("Empty!");
             }
             msg.channel.send(embed);
-            msg.delete()
+            msg.delete();
         }
     },
 ];
@@ -202,7 +210,7 @@ function play(client) {
     update(channel);
 
     let stream = yt(queue[0].url, {audioonly: true});
-    handler = connection.playStream(stream, {audioonly: true});
+    handler = connection.playStream(stream);
 
     handler.once("end", (_) => {
         handler = null;

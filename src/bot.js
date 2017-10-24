@@ -43,7 +43,7 @@ fs.readdir(`${__dirname}/music`, (err, files) => {
 });
 
 client.on('ready', (evt) => {
-
+    console.log("Connected!");
 });
 
 client.on('message', (message) => {
