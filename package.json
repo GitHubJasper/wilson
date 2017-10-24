@@ -7,9 +7,12 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "discord.js": "^11.2.1",
+    "ffmpeg": "0.0.4",
+    "node-opus": "^0.2.7",
     "sqlite": "^2.8.0",
     "steam-web": "^0.6.0",
     "tinyreq": "^3.2.6",
-    "yahoo-weather": "^2.2.2"
+    "yahoo-weather": "^2.2.2",
+    "ytdl-core": "^0.18.1"
   }
 }
