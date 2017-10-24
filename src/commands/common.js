@@ -85,7 +85,10 @@ module.exports.help = {
     command: "common",
     required: 1,
     optional: 2,
-    description: "Show which games you have in common.",
+    description: [
+        "Show which games you have in common with another user.",
+        "Show which games you have in common with another user, given a set of tags. \n\tYou can combine tags like: co-op&multiplayer&!(fps|3dperson)",
+    ],
     parameters: [
         ["user"],
         ["user", "tags"]

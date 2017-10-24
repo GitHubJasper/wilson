@@ -72,10 +72,17 @@ module.exports.help = {
     command: "library",
     required: 0,
     optional: 2,
+    description: [
+        "Show the games you own on steam.",
+        "Show the games a given user owns on steam.",
+        "Show the games you own on steam given a set of tags. \n\tYou can combine tags like: co-op&multiplayer&!(fps|3dperson)",
+        "Show the games a user owns on steam given a user and a set of tags. \n\tYou can combine tags like: co-op&multiplayer&!(fps|3dperson)"
+    ],
     description: "Show the games you own on steam.",
     parameters: [
         [],
         ["user"],
+        ["tags"],
         ["user", "tags"]
     ]
 }

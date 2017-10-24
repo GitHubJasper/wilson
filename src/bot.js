@@ -87,14 +87,18 @@ client.on('message', (message) => {
         embed.setTitle("Commands");
         msg = "";
         while(next != null) {
-            next.help.parameters.forEach(function(commandTypes) {
-                msg += "**!" + next.help.command;
-                commandTypes.forEach(function(parameter) {
+            let counter = 0;
+            while(counter < next.help.parameters.length && next.help.parameters.length == next.help.description.length){
+                params = next.help.parameters[counter];
+                description = next.help.description[counter];
+                msg += "**"+ auth.prefix + next.help.command;
+                params.forEach(function(parameter) {
                     msg += " <" + parameter + ">";
                 });
                 msg += "**\n";
-            });
-            msg += "\t" + next.help.description + "\n \n";
+                msg += "\t" +description + "\n\n";
+                counter++;
+            }
             next = map_itr.next().value;
         }
         embed.setDescription(msg);
