@@ -121,6 +121,7 @@ module.exports = {
         gameList.forEach(function(currentGame) {
             let url = "http://store.steampowered.com/app/" + currentGame.appid + "/";
             tinyreq(url, function(err, body) {
+                if (!body) { console.log("No body found"); return };
                 let $ = cheerio.load(body);
                 var currentTags = $("a.app_tag").text().toLowerCase();
                 currentTags = currentTags.replace(/\t| /g,'').split("\n");
@@ -133,6 +134,7 @@ module.exports = {
                 }
             });
         });
+
     }
 };
 

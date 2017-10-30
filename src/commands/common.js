@@ -41,6 +41,7 @@ module.exports.run = (client, message, args) => {
                         counter++;
                     }
                     let embed = new Discord.RichEmbed().setTitle(`${other.tag} has ${list.length} games in common`);
+                    embed.setColor(`#00adee`);
                     if (args[1]) {
                         embed.setTitle(`${other.tag} has ${list.length} games in common with the tag "${args[1]}"`)
                     }

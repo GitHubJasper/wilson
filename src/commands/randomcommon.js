@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const sql = require("sqlite");
+const steam = require("steam-web");
 const auth = require("../auth.json");
 const fs = require("fs");
 const path = require("path");
@@ -27,10 +28,12 @@ module.exports.run = (client, message, args) => {
             switch(error){
                 case 0:
                     let pick = list[Math.ceil(Math.random() * (list.length - 1))];
-                    let embed = new Discord.RichEmbed().setTitle(`Random game you have in common`);
-                    embed.setDescription("RNGsus has decided that you will play... \n[Launch game](steam://run/" + pick.appid + ")");
-                    embed.addField(`${pick.name}`, `${pick.playtime_forever} minutes played`);
-                    embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`)
+                    let embed = new Discord.RichEmbed().setTitle(`${pick.name}`);
+                    embed.setColor(`#00adee`);
+                    embed.setURL(`http://store.steampowered.com/app/${pick.appid}`);
+                    embed.setDescription(`[Launch this game!](steam://rungameid/${pick.appid})`);
+                    embed.setThumbnail(`http://media.steampowered.com/steamcommunity/public/images/apps/${pick.appid}/${pick.img_icon_url}.jpg`);
+                    embed.setFooter(`${pick.playtime_forever} minutes played`);
                     message.channel.send(embed);
                 break;
                 case 1:

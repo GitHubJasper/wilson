@@ -1,6 +1,10 @@
+const Discord = require("discord.js");
+
 module.exports.run = (client, message, args) => {
-    message.channel.send('pong!');
-    console.log("Pong sent")
+    let embed = new Discord.RichEmbed().setTitle("Pong!").setColor(`#00adee`);
+    embed.setDescription(`${client.ping} ms`);
+    message.channel.send(embed);
+    console.log("Pong!")
 };
 
 module.exports.help = {
@@ -11,4 +15,4 @@ module.exports.help = {
         "1. Ping \n\t2. Pong. \n\t3. ??? \n\t4. PROFIT!!!"
     ],
     parameters: [[]]
-}
+};
