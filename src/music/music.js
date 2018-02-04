@@ -1,15 +1,20 @@
 const Discord = require("discord.js");
 const yt = require("ytdl-core");
 const auth = require("../auth.json");
+const search = require('youtube-search');
 const fs = require("fs");
 const path = require("path");
 
-var queue = [];
-var current = null;
-var handler = null;
-var connection = null;
-var last = null;
-var notification = new Discord.RichEmbed().setColor("1db954");
+let queue = [];
+let current = null;
+let handler = null;
+let connection = null;
+let last = null;
+let notification = new Discord.RichEmbed().setColor("1db954");
+let opts = {
+    maxResults: 1,
+    key: auth.youtube
+};
 
 /**
  * Look at that spaghetti code
@@ -58,38 +63,34 @@ module.exports.commands = [
         run: (client, msg, args) => {
             let url = args[0];
             if (!url) return;
-            if (!connection) {
-                connect(msg);
-            }
-            yt.getInfo(url, (err, info) => {
-                if (err) {
-                    msg.channel.send(`${err}`);
-                    console.error(err);
+            connect(msg).then((obj) => {
+                connection = obj;
+                if (yt.validateURL(url)) {
+                    yt.getInfo(url, (err, info) => {
+                        if (err) {
+                            msg.channel.send(`${err}`);
+                            console.error(err)
+                        } else {
+                            add(msg, info, client)
+                        }
+                    })
                 } else {
-                    notification
-                        .setTitle(info["title"])
-                        .setAuthor("Added to the queue")
-                        .setURL(url)
-                        .setFooter(`Added by ${msg.author.tag}`);
-
-                    msg.channel.send(notification).then((obj) => {
-                        obj.delete(10000);
+                    let query = "";
+                    args.forEach(function(s) {
+                        query += s + " "
                     });
-
-                    queue.push({
-                        title: info["title"],
-                        url: url,
-                        user: msg.author.tag
-                    });
-
-                    msg.delete();
-
-                    if (!handler) {
-                        play(client);
-                    }
-
+                    console.log(query);
+                    search(query, opts, (err, res) => {
+                        if (err) {
+                            msg.channel.send(`${err}`);
+                            console.error(err)
+                        } else {
+                            add(msg, res[0], client)
+                        }
+                    })
                 }
-            })
+            }).catch(console.error);
+
         },
         required: 1
     },
@@ -141,6 +142,9 @@ module.exports.commands = [
                 connection.channel
                     .leave();
                 connection = null;
+                if (last) {
+                    last.delete();
+                }
             }
             msg.delete();
         }
@@ -185,11 +189,49 @@ module.exports.commands = [
     },
 ];
 
+function add(msg, info, client) {
+    //console.log(info)
+    let url = info["link"];
+    if (!url) {
+        url = info["video_url"]
+    }
+
+    notification
+        .setTitle(info["title"])
+        .setAuthor("Added to the queue")
+        .setURL(url)
+        .setFooter(`Added by ${msg.author.tag}`);
+
+    msg.channel.send(notification).then((obj) => {
+        obj.delete(10000);
+    });
+
+    queue.push({
+        title: info["title"],
+        url: url,
+        user: msg.author.tag
+    });
+
+    msg.delete();
+
+    if (!handler) {
+        play(client);
+    }
+}
+
 function connect(msg) {
     let channel = msg.member.voiceChannel;
-    channel.join().then(obj => {
-        connection = obj;
-    }).catch(console.error);
+    if (!connection) {
+        return channel.join()
+    } else {
+        return new Promise((resolve, reject) => {
+            if (!connection) {
+                reject("Something went wrong")
+            } else {
+                resolve(connection)
+            }
+        })
+    }
 }
 
 function play(client) {
@@ -210,6 +252,7 @@ function play(client) {
     update(channel);
 
     let stream = yt(queue[0].url, {audioonly: true});
+
     handler = connection.playStream(stream);
 
     handler.once("end", (_) => {

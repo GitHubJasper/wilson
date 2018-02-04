@@ -6,13 +6,14 @@
   "author": "Luke Prananta",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "discord.js": "^11.2.1",
+    "discord.js": "^11.3.0",
     "ffmpeg": "0.0.4",
     "node-opus": "^0.2.7",
-    "sqlite": "^2.8.0",
+    "sqlite": "^2.9.1",
     "steam-web": "^0.6.0",
-    "tinyreq": "^3.2.6",
+    "tinyreq": "^3.3.1",
     "yahoo-weather": "^2.2.2",
-    "ytdl-core": "^0.18.1"
+    "youtube-search": "^1.0.10",
+    "ytdl-core": "^0.18.7"
   }
 }
