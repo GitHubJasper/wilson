@@ -183,6 +183,9 @@ function generateList(games, otherid, callbackFunction){
             }
             let appidsOther = [];
             let othergames = otherdata.response.games;
+
+            // TODO: catch undefined othergames, caused when profile or gamelist are set to private
+
             if(othergames.length == 0){
                 callbackFunction([], 2);
                 return;
