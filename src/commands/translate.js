@@ -26,6 +26,7 @@ module.exports.run = function(client, message, args) {
         .then(messages => {
             message = messages.filter(m => m.content)
                 .filter(m => !m.content.includes('!translate'))
+                .filter(m => !m.author.bot)
                 .first();
             if (!message) {
                 embedError(channel, new Error('No message found to translate'))

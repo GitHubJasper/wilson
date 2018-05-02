@@ -19,6 +19,9 @@ const reply = {
     },
     "feelsrainman": {
         files: ['https://i.imgur.com/vPD5S87.gif']
+    },
+    "coggers": {
+        files: ['https://cdn.discordapp.com/attachments/367765587260080129/440786237448519682/3x.gif']
     }
 };
 
