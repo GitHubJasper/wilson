@@ -14,10 +14,7 @@ module.exports.run = function(client, message, args) {
     let original = 'auto';
     let target = 'en';
 
-    if (args[0] && args[1]) {
-        original = args[0];
-        target = args[1];
-    } else if(args[0]) {
+    if(args[0]) {
         target = args[0];
     }
 
@@ -25,25 +22,37 @@ module.exports.run = function(client, message, args) {
 
     console.log("Translation called")
 
-    channel.fetchMessages({ limit: 2 })
+    channel.fetchMessages({ limit: 20 })
         .then(messages => {
-            message = messages.last().content;
-            translate(message, {from: original, to: target}).then(result => {
-                channel.send(result.text);
-            }).catch(error => {
-                console.error(error.message);
-                let embed = new Discord.RichEmbed().setTitle("Error");
-                embed.setDescription(error.message);
-                channel.send(embed);
-            });
+            message = messages.filter(m => m.content)
+                .filter(m => !m.content.includes('!translate'))
+                .first();
+            if (!message) {
+                embedError(channel, new Error('No message found to translate'))
+            } else {
+                translate(message.cleanContent, {from: original, to: target}).then(result => {
+                    let embed = new Discord.RichEmbed().setTitle(message.author.username);
+                    embed.setDescription(result.text);
+                    channel.send(embed);
+                }).catch(error => {
+                    embedError(channel, error)
+                });
+            }
         }).catch(console.error);
 };
+
+function embedError(channel, error){
+    console.error(error.message);
+    let embed = new Discord.RichEmbed().setTitle("Error");
+    embed.setDescription(error.message);
+    channel.send(embed);
+}
 
 module.exports.help = {
     name: "Translate",
     command: "translate",
     required: 0,
-    optional: 2,
+    optional: 1,
     description: [
         "Translate last sent message in channel."
     ],

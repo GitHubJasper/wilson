@@ -10,8 +10,16 @@ Todo: random game pick, check if both has game,
 const client = new Discord.Client();
 const reply = {
     "marco": "Polo!",
-    "geodude": "https://i.imgur.com/YdVoIqp.png",
-    "praise be": praiseBe()
+    "geodude": {
+        files: ["https://i.imgur.com/YdVoIqp.png"]
+    },
+    "praise be": praiseBe(),
+    "wow": {
+        files: ['https://cdn.discordapp.com/attachments/374267554320875521/441316962623291392/wow.gif']
+    },
+    "feelsrainman": {
+        files: ['https://i.imgur.com/vPD5S87.gif']
+    }
 };
 
 
@@ -73,10 +81,10 @@ client.on('message', (message) => {
 
     }
 
-
-
     if (reply[message.content.toLowerCase()]) {
-        message.channel.send(reply[message.content.toLowerCase()]);
+        message.channel.send(reply[message.content.toLowerCase()])
+            .then()
+            .catch(console.error);
     }
 
     //fluff
@@ -127,6 +135,7 @@ function praiseBe() {
         .setImage('https://s3.amazonaws.com/files.d20.io/images/33679087/1OxkRToSEBz_UbvRVrGp9A/med.jpg?1495996223971');
     return embed;
 }
+
 
 
 client.login(auth.token);
